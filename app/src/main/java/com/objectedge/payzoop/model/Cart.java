@@ -27,7 +27,7 @@ public class Cart {
 
     public List<ProductModel> products = new ArrayList<ProductModel>();
 
-    public void addProduct(ProductModel product){
+    private void addProduct(ProductModel product){
         if(products.contains(product)){
             ProductModel productInCart = null;
             for (ProductModel item:products) {
@@ -36,14 +36,20 @@ public class Cart {
                     break;
                 }
             }
-            productInCart.quantity += 1;
+            increamentProductCount(productInCart);
         }else {
             products.add(product);
         }
         mEventBus.post(new CartEvent.UpdateCart(getTotalItemsInCart()));
     }
 
-    public void removeProduct(ProductModel product){
+    private void increamentProductCount(ProductModel productInCart) {
+        productInCart.quantity += 1;
+        //Integer num = Integer.parseInt(productInCart.getHolder().elegantNumberButton.getNumber());
+       // productInCart.getHolder().elegantNumberButton.setNumber(productInCart.getQuantity().toString());
+    }
+
+    private void removeProduct(ProductModel product){
         if(products.contains(product)){
             ProductModel productInCart = null;
             for (ProductModel item:products) {
@@ -90,6 +96,21 @@ public class Cart {
             sum += (Double.parseDouble(item.getListPrice()) * item.quantity);
         }
         return sum;
+    }
+
+    public String addToCart(ProductModel product){
+        for (ProductModel prod : products) {
+            if(product.equals(prod)){
+                increamentProductCount(prod);
+                mEventBus.post(new CartEvent.UpdateCart(getTotalItemsInCart()));
+                return "PRODUCT_IN_CART_ALREADY";
+            }
+        }
+        addProduct(product);
+        mEventBus.post(new CartEvent.UpdateCart(getTotalItemsInCart()));
+        return "PRODUCT_ADDED_TO_CART";
+        //miniCartItemCountView.setText(String.valueOf(cart.products.size()));
+
     }
 }
 
